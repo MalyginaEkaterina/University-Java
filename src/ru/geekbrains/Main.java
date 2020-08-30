@@ -17,7 +17,8 @@ public class Main {
         isPositive(-10);
         System.out.println(isNegative(-1));
         printName("Екатерина");
-        isLeapYear(2200);
+        isLeapYear(400);
+        isLeapYear2(400);
     }
 
     public static int calc(int a, int b, int c, int d) {
@@ -53,6 +54,15 @@ public class Main {
                 result = true;
             }
         }
+        if (result) {
+            System.out.println("Год " + year + " високосный");
+        } else {
+            System.out.println("Год " + year + " не високосный");
+        }
+    }
+
+    public static void isLeapYear2(int year) {
+        boolean result = (year % 4 == 0) && ((year % 400 == 0) || (year % 100 != 0));
         if (result) {
             System.out.println("Год " + year + " високосный");
         } else {
