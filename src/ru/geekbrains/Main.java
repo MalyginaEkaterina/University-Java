@@ -1,72 +1,50 @@
 package ru.geekbrains;
 
+import java.util.Random;
+import java.util.Scanner;
+
 public class Main {
 
     public static void main(String[] args) {
-        byte val1 = -10;
-        short val2 = 1000;
-        int val3 = 120;
-        long val4 = 120000000L;
-        float val5 = 120.1f;
-        double val6 = 1234.1;
-        char val7 = '#';
-        boolean val8 = true;
+        String[] words = {"apple", "orange", "lemon", "banana", "apricot", "avocado", "broccoli", "carrot", "cherry",
+                "garlic", "grape", "melon", "leak", "kiwi", "mango", "mushroom", "nut", "olive", "pea", "peanut",
+                "pear", "pepper", "pineapple", "pumpkin", "potato"};
 
-        System.out.println("a*(b+(c/d)) = " + calc(4, 5, 8, 2));
-        System.out.println("a+b between 10 and 20 = " + compareSum(3, 3));
-        isPositive(-10);
-        System.out.println(isNegative(-1));
-        printName("Екатерина");
-        isLeapYear(400);
-        isLeapYear2(400);
+        Random random = new Random();
+        int numOfHiddenWord = random.nextInt(words.length);
+        String hiddenWord = words[numOfHiddenWord];
+        //System.out.println(hiddenWord);
+        Scanner sc = new Scanner(System.in);
+        boolean result;
+        System.out.println("Угадайте слово");
+        do {
+            String userWord = sc.nextLine();
+            result = hiddenWord.equals(userWord);
+            if (userWord.length() == 0) {
+                System.out.println("Введите слово");
+                continue;
+            }
+            if (!result) {
+                printMatchedChar(hiddenWord, userWord);
+            }
+        } while (!result);
+        System.out.println("Вы угадали!");
+        sc.close();
     }
 
-    public static int calc(int a, int b, int c, int d) {
-        return a * (b + (c / d));
-    }
-
-    public static boolean compareSum(int a, int b) {
-        return ((a + b) >= 10) && ((a + b) <= 20);
-    }
-
-    public static void isPositive(int a) {
-        if (a >= 0) {
-            System.out.println("Число положительное");
-        } else {
-            System.out.println("Число отрицательное");
-        }
-    }
-
-    public static boolean isNegative(int a) {
-        return (a < 0);
-    }
-
-    public static void printName(String name) {
-        System.out.println("Привет, " + name + "!");
-    }
-
-    public static void isLeapYear(int year) {
-        boolean result = false;
-        if (year % 4 == 0) {
-            if (year % 400 == 0) {
-                result = true;
-            } else if (year % 100 != 0) {
-                result = true;
+    public static void printMatchedChar(String word1, String word2) {
+        System.out.print("Попробуйте еще, угаданные буквы: ");
+        int minWordLength = Math.min(word1.length(), word2.length());
+        for (int i = 0; i < minWordLength; i++) {
+            if (word1.charAt(i) == word2.charAt(i)) {
+                System.out.print(word1.charAt(i));
+            } else {
+                System.out.print("#");
             }
         }
-        if (result) {
-            System.out.println("Год " + year + " високосный");
-        } else {
-            System.out.println("Год " + year + " не високосный");
+        for (int i = 0; i < 15 - minWordLength; i++) {
+            System.out.print("#");
         }
-    }
-
-    public static void isLeapYear2(int year) {
-        boolean result = (year % 4 == 0) && ((year % 400 == 0) || (year % 100 != 0));
-        if (result) {
-            System.out.println("Год " + year + " високосный");
-        } else {
-            System.out.println("Год " + year + " не високосный");
-        }
+        System.out.println();
     }
 }
