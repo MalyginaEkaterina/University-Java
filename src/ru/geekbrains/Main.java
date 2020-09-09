@@ -6,8 +6,8 @@ import java.util.Scanner;
 public class Main {
 
     public static char[][] field;
-    public static final int SIZE = 3;
-    public static final int SYMB_TO_WIN = 3;
+    public static final int SIZE = 5;
+    public static final int SYMB_TO_WIN = 4;
     public static final char EMPTY_CHAR = '•';
     public static final char USER_CHAR = 'X';
     public static final char COMP_CHAR = 'O';
@@ -31,8 +31,7 @@ public class Main {
                 System.out.println("Ничья");
                 break;
             }
-            int[] compXY = new int[2];
-            compMove(compXY, userXY[0], userXY[1]);
+            int[] compXY = compMove(userXY[0], userXY[1]);
             printField();
             if (checkWin(compXY[0], compXY[1], COMP_CHAR)) {
                 System.out.println("Вы проиграли");
@@ -108,16 +107,24 @@ public class Main {
         return false;
     }
 
-    public static boolean chekPrevWinLine(int[] compXY, int i) {
+    public static boolean checkPrevWinLine(int[] compXY, int i, boolean isUser) {
         int y = -1;
         int countOfX = 0;
         int isDanger = 0;
+        char ourChar, otherChar;
+        if (isUser) {
+            ourChar = USER_CHAR;
+            otherChar = COMP_CHAR;
+        } else {
+            ourChar = COMP_CHAR;
+            otherChar = USER_CHAR;
+        }
         for (int k = 0; k < SIZE; k++) {
-            if (field[i][k] == USER_CHAR) {
+            if (field[i][k] == ourChar) {
                 countOfX++;
             } else if (field[i][k] == EMPTY_CHAR) {
                 //предотвратим комбинацию . x x x .
-                if (LEVEL_UP && SIZE >= 5) {
+                if (LEVEL_UP && SIZE >= 5 && isUser) {
                     if (isDanger == 1 && countOfX == SYMB_TO_WIN - 2) {
                         compXY[0] = i;
                         compXY[1] = (rand.nextInt(2) == 0) ? y : k;
@@ -126,7 +133,7 @@ public class Main {
                 }
                 y = k;
                 isDanger = 1;
-            } else if (field[i][k] == COMP_CHAR) {
+            } else if (field[i][k] == otherChar) {
                 countOfX = 0;
                 isDanger = 0;
             }
@@ -139,16 +146,24 @@ public class Main {
         return false;
     }
 
-    public static boolean chekPrevWinCol(int[] compXY, int j) {
+    public static boolean checkPrevWinCol(int[] compXY, int j, boolean isUser) {
         int x = -1;
         int countOfX = 0;
         int isDanger = 0;
+        char ourChar, otherChar;
+        if (isUser) {
+            ourChar = USER_CHAR;
+            otherChar = COMP_CHAR;
+        } else {
+            ourChar = COMP_CHAR;
+            otherChar = USER_CHAR;
+        }
         for (int k = 0; k < SIZE; k++) {
-            if (field[k][j] == USER_CHAR) {
+            if (field[k][j] == ourChar) {
                 countOfX++;
             } else if (field[k][j] == EMPTY_CHAR) {
                 //предотвратим комбинацию . x x x .
-                if (LEVEL_UP && SIZE >= 5) {
+                if (LEVEL_UP && SIZE >= 5 && isUser) {
                     if (isDanger == 1 && countOfX == SYMB_TO_WIN - 2) {
                         compXY[0] = (rand.nextInt(2) == 0) ? x : k;
                         compXY[1] = j;
@@ -157,7 +172,7 @@ public class Main {
                 }
                 x = k;
                 isDanger = 1;
-            } else if (field[k][j] == COMP_CHAR) {
+            } else if (field[k][j] == otherChar) {
                 countOfX = 0;
                 isDanger = 0;
             }
@@ -170,20 +185,28 @@ public class Main {
         return false;
     }
 
-    public static boolean chekPrevWinLeftDiag(int[] compXY, int i, int j) {
+    public static boolean checkPrevWinLeftDiag(int[] compXY, int i, int j, boolean isUser) {
         int x = -1;
         int y = -1;
         int countOfX = 0;
         int isDanger = 0;
+        char ourChar, otherChar;
+        if (isUser) {
+            ourChar = USER_CHAR;
+            otherChar = COMP_CHAR;
+        } else {
+            ourChar = COMP_CHAR;
+            otherChar = USER_CHAR;
+        }
 
         int k = i - Math.min(i, j);
         int n = j - Math.min(i, j);
         while (k < SIZE && n < SIZE) {
-            if (field[k][n] == USER_CHAR) {
+            if (field[k][n] == ourChar) {
                 countOfX++;
             } else if (field[k][n] == EMPTY_CHAR) {
                 //предотвратим комбинацию . x x x .
-                if (LEVEL_UP && SIZE >= 5) {
+                if (LEVEL_UP && SIZE >= 5 && isUser) {
                     if (isDanger == 1 && countOfX == SYMB_TO_WIN - 2) {
                         if (rand.nextInt(2) == 0) {
                             compXY[0] = x;
@@ -198,7 +221,7 @@ public class Main {
                 x = k;
                 y = n;
                 isDanger = 1;
-            } else if (field[k][n] == COMP_CHAR) {
+            } else if (field[k][n] == otherChar) {
                 countOfX = 0;
                 isDanger = 0;
             }
@@ -214,19 +237,27 @@ public class Main {
         return false;
     }
 
-    public static boolean chekPrevWinRightDiag(int[] compXY, int i, int j) {
+    public static boolean checkPrevWinRightDiag(int[] compXY, int i, int j, boolean isUser) {
         int x = -1;
         int y = -1;
         int countOfX = 0;
         int isDanger = 0;
+        char ourChar, otherChar;
+        if (isUser) {
+            ourChar = USER_CHAR;
+            otherChar = COMP_CHAR;
+        } else {
+            ourChar = COMP_CHAR;
+            otherChar = USER_CHAR;
+        }
         int k = i + Math.min(SIZE - 1 - i, j);
         int n = j - Math.min(SIZE - 1 - i, j);
         while (k >= 0 && n < SIZE) {
-            if (field[k][n] == USER_CHAR) {
+            if (field[k][n] == ourChar) {
                 countOfX++;
             } else if (field[k][n] == EMPTY_CHAR) {
                 //предотвратим комбинацию . x x x .
-                if (LEVEL_UP && SIZE >= 5) {
+                if (LEVEL_UP && SIZE >= 5 && isUser) {
                     if (isDanger == 1 && countOfX == SYMB_TO_WIN - 2) {
                         if (rand.nextInt(2) == 0) {
                             compXY[0] = x;
@@ -241,7 +272,7 @@ public class Main {
                 x = k;
                 y = n;
                 isDanger = 1;
-            } else if (field[k][n] == COMP_CHAR) {
+            } else if (field[k][n] == otherChar) {
                 countOfX = 0;
                 isDanger = 0;
             }
@@ -257,22 +288,61 @@ public class Main {
         return false;
     }
 
-    public static void compMove(int[] compXY, int i, int j) {
-        //проверим i-ю строку, имеет ли она предвыигрышное состояние, если да, то заблокируем его
-        if (!chekPrevWinLine(compXY, i)) {
-            //иначе проверим j-й столбец
-            if (!chekPrevWinCol(compXY, j)) {
-                //иначе проверим прямую диагональ
-                if (!chekPrevWinLeftDiag(compXY, i, j)) {
-                    //иначе проверим обратную диагональ
-                    if (!chekPrevWinRightDiag(compXY, i, j)) {
-                        int x, y;
-                        do {
-                            x = rand.nextInt(SIZE);
-                            y = rand.nextInt(SIZE);
-                        } while (!isValidMove(x, y));
-                        compXY[0] = y;
-                        compXY[1] = x;
+    public static boolean checkOurPrevWin(int[] compXY) {
+        for (int i = 0; i < SIZE; i++) {
+            if (checkPrevWinLine(compXY, i, false)) {
+                return true;
+            }
+        }
+        for (int j = 0; j < SIZE; j++) {
+            if (checkPrevWinCol(compXY, j, false)) {
+                return true;
+            }
+        }
+        for (int i = 0; i <= SIZE - SYMB_TO_WIN; i++) {
+            if (checkPrevWinLeftDiag(compXY, i, 0, false)) {
+                return true;
+            }
+            if (i > 0) {
+                if (checkPrevWinLeftDiag(compXY, 0, i, false)) {
+                    return true;
+                }
+            }
+        }
+        for (int i = 0; i <= SIZE - SYMB_TO_WIN; i++) {
+            if (checkPrevWinRightDiag(compXY, 0, SIZE-1-i, false)) {
+                return true;
+            }
+            if (i > 0) {
+                if (checkPrevWinRightDiag(compXY, i, SIZE-1, false)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public static int[] compMove(int i, int j) {
+        int[] compXY = new int[2];
+        //может ли компьютер выиграть за один ход
+        if (!checkOurPrevWin(compXY)) {
+            //проверим i-ю строку, имеет ли она предвыигрышное состояние, если да, то заблокируем его
+            if (!checkPrevWinLine(compXY, i, true)) {
+                //иначе проверим j-й столбец
+                if (!checkPrevWinCol(compXY, j, true)) {
+                    //иначе проверим прямую диагональ
+                    if (!checkPrevWinLeftDiag(compXY, i, j, true)) {
+                        //иначе проверим обратную диагональ
+                        if (!checkPrevWinRightDiag(compXY, i, j, true)) {
+                            int x, y;
+                            do {
+                                x = rand.nextInt(SIZE);
+                                y = rand.nextInt(SIZE);
+                            } while (!isValidMove(x, y));
+                            compXY[0] = y;
+                            compXY[1] = x;
+                        }
                     }
                 }
             }
@@ -281,6 +351,7 @@ public class Main {
         System.out.println("Ход компьютера: " + (compXY[1] + 1) + ", " + (compXY[0] + 1));
         field[compXY[0]][compXY[1]] = COMP_CHAR;
         countOfMoves++;
+        return compXY;
     }
 
     public static int[] userMove() {
