@@ -1,50 +1,25 @@
 package ru.geekbrains;
 
-import java.util.Random;
-import java.util.Scanner;
-
 public class Main {
 
     public static void main(String[] args) {
-        String[] words = {"apple", "orange", "lemon", "banana", "apricot", "avocado", "broccoli", "carrot", "cherry",
-                "garlic", "grape", "melon", "leak", "kiwi", "mango", "mushroom", "nut", "olive", "pea", "peanut",
-                "pear", "pepper", "pineapple", "pumpkin", "potato"};
 
-        Random random = new Random();
-        int numOfHiddenWord = random.nextInt(words.length);
-        String hiddenWord = words[numOfHiddenWord];
-        //System.out.println(hiddenWord);
-        Scanner sc = new Scanner(System.in);
-        boolean result;
-        System.out.println("Угадайте слово");
-        do {
-            String userWord = sc.nextLine();
-            result = hiddenWord.equals(userWord);
-            if (userWord.length() == 0) {
-                System.out.println("Введите слово");
-                continue;
-            }
-            if (!result) {
-                printMatchedChar(hiddenWord, userWord);
-            }
-        } while (!result);
-        System.out.println("Вы угадали!");
-        sc.close();
-    }
+        Employee[] empArray = new Employee[5];
+        empArray[0] = new Employee("Иванов Иван Иванович", "инженер", "who0@ya.ru",
+                "79152320000", 35000, 31);
+        empArray[1] = new Employee("Николаев Илья Иванович", "главный инженер", "who1@ya.ru",
+                "79152321111", 55000, 50);
+        empArray[2] = new Employee("Ильин Иван Ильич", "младший инженер", "who2@ya.ru",
+                "79152322222", 30000, 39);
+        empArray[3] = new Employee("Антонов Антон Антонович", "механик", "who3@ya.ru",
+                "79152323333", 31000, 40);
+        empArray[4] = new Employee("Иванов Антон Николаевич", "главный механик", "who4@ya.ru",
+                "79152324444", 36000, 45);
 
-    public static void printMatchedChar(String word1, String word2) {
-        System.out.print("Попробуйте еще, угаданные буквы: ");
-        int minWordLength = Math.min(word1.length(), word2.length());
-        for (int i = 0; i < minWordLength; i++) {
-            if (word1.charAt(i) == word2.charAt(i)) {
-                System.out.print(word1.charAt(i));
-            } else {
-                System.out.print("#");
+        for (int i = 0; i < empArray.length; i++) {
+            if (empArray[i].getAge() >= 40) {
+                empArray[i].info();
             }
         }
-        for (int i = 0; i < 15 - minWordLength; i++) {
-            System.out.print("#");
-        }
-        System.out.println();
     }
 }
