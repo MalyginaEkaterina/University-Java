@@ -3,31 +3,26 @@ package ru.geekbrains;
 public class Main {
 
     public static void main(String[] args) {
-        Cat cat1 = new Cat("Barsik");
-        Dog dog1 = new Dog("Sharik");
+        Cat cat1 = new Cat("Rygik", 5);
+        Cat cat2 = new Cat("Barsik", 1);
+        Cat cat3 = new Cat("Pushok", 2);
+        Cat cat4 = new Cat("Tisha", 1);
+        Plate plate = new Plate(7);
+        plate.info();
 
-        cat1.run(150);
-        cat1.run(250);
-        cat1.swim(100);
-        cat1.jump(2);
-        cat1.jump(3);
+        Cat[] cats = {cat1, cat2, cat3, cat4};
 
-        dog1.run(450);
-        dog1.run(550);
-        dog1.swim(5);
-        dog1.swim(15);
-        dog1.jump(0.4f);
-        dog1.jump(0.9f);
+        for (int i = 0; i < cats.length; i++) {
+            cats[i].eat(plate);
+            cats[i].printInfo();
+            plate.info();
+        }
 
-        Cat cat2 = new Cat("Pushok", 140, 1);
-        cat2.run(150);
-        cat2.swim(100);
-        cat2.jump(2);
+        plate.addFood(10);
+        plate.info();
 
-        Dog dog2 = new Dog("Bobik", 300, 4, 0.3f);
-        dog2.run(450);
-        dog2.swim(5);
-        dog2.jump(0.4f);
-
+        cat3.eat(plate);
+        cat3.printInfo();
+        plate.info();
     }
 }

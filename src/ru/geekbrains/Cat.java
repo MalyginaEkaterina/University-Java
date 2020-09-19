@@ -1,17 +1,24 @@
 package ru.geekbrains;
 
-public class Cat extends Animal{
+public class Cat {
+    private String name;
+    private int appetite;
+    private boolean isFull;
 
-    public Cat(String name){
-        super(name, 200, 0, 2);
+    public Cat(String name, int appetite) {
+        this.name = name;
+        this.appetite = appetite;
+        this.isFull = false;
     }
 
-    public Cat(String name, float limRun, float limJump) {
-        super(name, limRun, 0, limJump);
+    public void eat(Plate plate) {
+        if (plate.getFood() >= appetite) {
+            plate.decreaseFood(appetite);
+            this.isFull = true;
+        }
     }
 
-    @Override
-    public void swim(float dist){
-        System.out.println(name + " не умеет плавать");
+    public void printInfo() {
+        System.out.println(name + " сыт: " + isFull);
     }
 }
