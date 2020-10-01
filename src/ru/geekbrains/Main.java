@@ -9,7 +9,7 @@ public class Main {
             String[][] arr = makeArrayFromString(s);
             printArr(arr);
             System.out.println("Calculation result: " + calcExpr2(arr));
-        } catch (LengthOfArrayException | InvalidArrayContent e) {
+        } catch (LengthOfArrayException | InvalidArrayContentException e) {
             e.printStackTrace();
         }
     }
@@ -37,7 +37,7 @@ public class Main {
                 try {
                     res += Integer.parseInt(arr[i][j]);
                 } catch (NumberFormatException e) {
-                    throw new InvalidArrayContent(i, j);
+                    throw new InvalidArrayContentException(i, j);
                 }
             }
         }
