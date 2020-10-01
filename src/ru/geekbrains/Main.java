@@ -1,72 +1,55 @@
 package ru.geekbrains;
 
+
 public class Main {
 
     public static void main(String[] args) {
-        byte val1 = -10;
-        short val2 = 1000;
-        int val3 = 120;
-        long val4 = 120000000L;
-        float val5 = 120.1f;
-        double val6 = 1234.1;
-        char val7 = '#';
-        boolean val8 = true;
-
-        System.out.println("a*(b+(c/d)) = " + calc(4, 5, 8, 2));
-        System.out.println("a+b between 10 and 20 = " + compareSum(3, 3));
-        isPositive(-10);
-        System.out.println(isNegative(-1));
-        printName("Екатерина");
-        isLeapYear(400);
-        isLeapYear2(400);
-    }
-
-    public static int calc(int a, int b, int c, int d) {
-        return a * (b + (c / d));
-    }
-
-    public static boolean compareSum(int a, int b) {
-        return ((a + b) >= 10) && ((a + b) <= 20);
-    }
-
-    public static void isPositive(int a) {
-        if (a >= 0) {
-            System.out.println("Число положительное");
-        } else {
-            System.out.println("Число отрицательное");
+        String s = "10 3 1 2\n2 3 2 2\n5 6 7 1\n300 3 1 0";
+        try {
+            String[][] arr = makeArrayFromString(s);
+            printArr(arr);
+            System.out.println("Calculation result: " + calcExpr2(arr));
+        } catch (LengthOfArrayException | InvalidArrayContent e) {
+            e.printStackTrace();
         }
     }
 
-    public static boolean isNegative(int a) {
-        return (a < 0);
-    }
-
-    public static void printName(String name) {
-        System.out.println("Привет, " + name + "!");
-    }
-
-    public static void isLeapYear(int year) {
-        boolean result = false;
-        if (year % 4 == 0) {
-            if (year % 400 == 0) {
-                result = true;
-            } else if (year % 100 != 0) {
-                result = true;
+    public static String[][] makeArrayFromString(String s) {
+        String[] arr = s.split("\n");
+        if (arr.length != 4) {
+            throw new LengthOfArrayException("Размер матрицы не 4x4");
+        }
+        String[][] result = new String[arr.length][];
+        for (int i = 0; i < arr.length; i++) {
+            result[i] = arr[i].split(" ");
+            if (result[i].length != 4) {
+                throw new LengthOfArrayException("Размер матрицы не 4x4");
             }
         }
-        if (result) {
-            System.out.println("Год " + year + " високосный");
-        } else {
-            System.out.println("Год " + year + " не високосный");
-        }
+        return result;
     }
 
-    public static void isLeapYear2(int year) {
-        boolean result = (year % 4 == 0) && ((year % 400 == 0) || (year % 100 != 0));
-        if (result) {
-            System.out.println("Год " + year + " високосный");
-        } else {
-            System.out.println("Год " + year + " не високосный");
+    //2. Преобразовать все элементы массива в числа типа int, просуммировать, поделить полученную сумму на 2, и вернуть результат;
+    public static int calcExpr2(String[][] arr) {
+        int res = 0;
+        for (int i = 0; i < arr.length; i++) {
+            for (int j = 0; j < arr[i].length; j++) {
+                try {
+                    res += Integer.parseInt(arr[i][j]);
+                } catch (NumberFormatException e) {
+                    throw new InvalidArrayContent(i, j);
+                }
+            }
+        }
+        return res / 2;
+    }
+
+    public static void printArr(String[][] arr) {
+        for (int i = 0; i < arr.length; i++) {
+            for (int j = 0; j < arr[i].length; j++) {
+                System.out.print(arr[i][j] + " ");
+            }
+            System.out.println();
         }
     }
 }
