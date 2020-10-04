@@ -1,55 +1,35 @@
 package ru.geekbrains;
 
 
+import java.util.*;
+
 public class Main {
 
     public static void main(String[] args) {
-        String s = "10 3 1 2\n2 3 2 2\n5 6 7 1\n300 3 1 0";
-        try {
-            String[][] arr = makeArrayFromString(s);
-            printArr(arr);
-            System.out.println("Calculation result: " + calcExpr2(arr));
-        } catch (LengthOfArrayException | InvalidArrayContentException e) {
-            e.printStackTrace();
+        //Создать массив с набором слов (20-30 слов, должны встречаться повторяющиеся)
+        String[] arrOfWords = ("Жили были дед да баба и была у них курочка Ряба Снесла курочка яичко да яичко не " +
+                "простое а яичко золотое дед бил бил не разбил баба бил бил не разбила").split(" ");
+        List<String> listOfWords = Arrays.asList(arrOfWords);
+        System.out.println(listOfWords);
+        //Найти список слов, из которых состоит текст (дубликаты не считать);
+        Set<String> setOfWords = new HashSet<>(listOfWords);
+        System.out.println(setOfWords);
+        //Посчитать сколько раз встречается каждое слово (использовать HashMap);
+        HashMap<String, Integer> countOfWords = new HashMap<>();
+        for (String word : listOfWords) {
+            countOfWords.put(word, countOfWords.getOrDefault(word, 0) + 1);
         }
-    }
+        System.out.println(countOfWords);
 
-    public static String[][] makeArrayFromString(String s) {
-        String[] arr = s.split("\n");
-        if (arr.length != 4) {
-            throw new LengthOfArrayException("Размер матрицы не 4x4");
-        }
-        String[][] result = new String[arr.length][];
-        for (int i = 0; i < arr.length; i++) {
-            result[i] = arr[i].split(" ");
-            if (result[i].length != 4) {
-                throw new LengthOfArrayException("Размер матрицы не 4x4");
-            }
-        }
-        return result;
-    }
-
-    //2. Преобразовать все элементы массива в числа типа int, просуммировать, поделить полученную сумму на 2, и вернуть результат;
-    public static int calcExpr2(String[][] arr) {
-        int res = 0;
-        for (int i = 0; i < arr.length; i++) {
-            for (int j = 0; j < arr[i].length; j++) {
-                try {
-                    res += Integer.parseInt(arr[i][j]);
-                } catch (NumberFormatException e) {
-                    throw new InvalidArrayContentException(i, j);
-                }
-            }
-        }
-        return res / 2;
-    }
-
-    public static void printArr(String[][] arr) {
-        for (int i = 0; i < arr.length; i++) {
-            for (int j = 0; j < arr[i].length; j++) {
-                System.out.print(arr[i][j] + " ");
-            }
-            System.out.println();
-        }
+        //2. Написать простой класс PhoneBook(внутри использовать HashMap)
+        PhoneBook phoneBook = new PhoneBook();
+        phoneBook.addPerson("Иванов", "70000000001", "who1@ya.ru");
+        phoneBook.addPerson("Васильев", "70000000002", "who2@ya.ru");
+        phoneBook.addPerson("Иванов", "70000000003", "who3@ya.ru");
+        phoneBook.addPerson("Журавлев", "70000000004", "who4@ya.ru");
+        phoneBook.addPerson("Васильев", "70000000005", "who5@ya.ru");
+        phoneBook.info();
+        System.out.println(phoneBook.getPhones("Иванов"));
+        System.out.println(phoneBook.getEmails("Васильев"));
     }
 }
