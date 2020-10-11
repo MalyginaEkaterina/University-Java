@@ -1,72 +1,50 @@
 package ru.geekbrains;
 
+import java.util.Arrays;
+
 public class Main {
+    static final int size = 10000000;
+    static final int h = size / 2;
 
     public static void main(String[] args) {
-        byte val1 = -10;
-        short val2 = 1000;
-        int val3 = 120;
-        long val4 = 120000000L;
-        float val5 = 120.1f;
-        double val6 = 1234.1;
-        char val7 = '#';
-        boolean val8 = true;
-
-        System.out.println("a*(b+(c/d)) = " + calc(4, 5, 8, 2));
-        System.out.println("a+b between 10 and 20 = " + compareSum(3, 3));
-        isPositive(-10);
-        System.out.println(isNegative(-1));
-        printName("Екатерина");
-        isLeapYear(400);
-        isLeapYear2(400);
+        oneThreadCalc();
+        twoThreadsCalc();
     }
 
-    public static int calc(int a, int b, int c, int d) {
-        return a * (b + (c / d));
-    }
-
-    public static boolean compareSum(int a, int b) {
-        return ((a + b) >= 10) && ((a + b) <= 20);
-    }
-
-    public static void isPositive(int a) {
-        if (a >= 0) {
-            System.out.println("Число положительное");
-        } else {
-            System.out.println("Число отрицательное");
+    public static void oneThreadCalc() {
+        float[] arr = new float[size];
+        for (int i = 0; i < arr.length; i++) {
+            arr[i] = 1;
         }
-    }
-
-    public static boolean isNegative(int a) {
-        return (a < 0);
-    }
-
-    public static void printName(String name) {
-        System.out.println("Привет, " + name + "!");
-    }
-
-    public static void isLeapYear(int year) {
-        boolean result = false;
-        if (year % 4 == 0) {
-            if (year % 400 == 0) {
-                result = true;
-            } else if (year % 100 != 0) {
-                result = true;
-            }
+        long a = System.currentTimeMillis();
+        for (int i = 0; i < arr.length; i++) {
+            arr[i] = (float) (arr[i] * Math.sin(0.2f + i / 5) * Math.cos(0.2f + i / 5) * Math.cos(0.4f + i / 2));
         }
-        if (result) {
-            System.out.println("Год " + year + " високосный");
-        } else {
-            System.out.println("Год " + year + " не високосный");
-        }
+        System.out.println(System.currentTimeMillis() - a);
     }
 
-    public static void isLeapYear2(int year) {
-        boolean result = (year % 4 == 0) && ((year % 400 == 0) || (year % 100 != 0));
-        if (result) {
-            System.out.println("Год " + year + " високосный");
-        } else {
-            System.out.println("Год " + year + " не високосный");
+    public static void twoThreadsCalc() {
+        float[] arr = new float[size];
+        for (int i = 0; i < arr.length; i++) {
+            arr[i] = 1;
         }
+        long a = System.currentTimeMillis();
+        float[] a1 = new float[h];
+        float[] a2 = new float[h];
+        System.arraycopy(arr, 0, a1, 0, h);
+        System.arraycopy(arr, h, a2, 0, h);
+        CalcThread thread1 = new CalcThread(0, a1);
+        CalcThread thread2 = new CalcThread(1, a2);
+        thread1.start();
+        thread2.start();
+        try {
+            thread1.join();
+            thread2.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.arraycopy(a1, 0, arr, 0, h);
+        System.arraycopy(a2, 0, arr, h, h);
+        System.out.println(System.currentTimeMillis() - a);
     }
 }
