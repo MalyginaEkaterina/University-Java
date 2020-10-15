@@ -1,10 +1,8 @@
 package ru.geekbrains;
 
-import java.io.Closeable;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.Socket;
+import java.net.SocketException;
 
 public class SocketThread extends Thread {
 
@@ -27,7 +25,13 @@ public class SocketThread extends Thread {
             out = new DataOutputStream(socket.getOutputStream());
             listener.onSocketReady(this, socket);
             while (!isInterrupted()) {
-                String msg = in.readUTF();
+                String msg;
+                try {
+                    msg = in.readUTF();
+                } catch (SocketException|EOFException e) {
+                    System.out.println(e);
+                    break;
+                }
                 listener.onReceiveString(this, socket, msg);
             }
         } catch (IOException e) {
@@ -45,7 +49,7 @@ public class SocketThread extends Thread {
     public synchronized boolean sendMessage(String msg) {
         try {
             out.writeUTF(msg);
-            out.flush();
+            out.flush(); //??? зачем вызывается этот метод, он вроде пустой для стрима из сокета?
             return true;
         } catch (IOException e) {
             listener.onSocketException(this, e);

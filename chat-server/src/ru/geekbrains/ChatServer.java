@@ -4,10 +4,12 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Vector;
 
 public class ChatServer implements ServerSocketThreadListener, SocketThreadListener {
     ServerSocketThread thread;
     private final DateFormat DATE_FORMAT = new SimpleDateFormat("HH:mm:ss: ");
+    private Vector<SocketThread> activeClientThreads = new Vector<>();
 
     public void start(int port) {
         if (thread != null && thread.isAlive()) {
@@ -45,27 +47,27 @@ public class ChatServer implements ServerSocketThreadListener, SocketThreadListe
     @Override
     public void onServerStop(ServerSocketThread thread) {
         putLog("Server thread stopped");
-
+        for (SocketThread t : activeClientThreads) {
+            t.close();
+        }
+        activeClientThreads.clear();
     }
 
     @Override
     public void onServerSocketCreated(ServerSocketThread thread, ServerSocket server) {
         putLog("Server socket created");
-
     }
 
     @Override
     public void onServerTimeout(ServerSocketThread thread, ServerSocket server) {
 //        putLog("Server timeout");
-
     }
 
     @Override
     public void onSocketAccepted(ServerSocketThread thread, ServerSocket server, Socket socket) {
         putLog("Client connected");
         String name = "SocketThread " + socket.getInetAddress() + ":" + socket.getPort();
-        new SocketThread(this, name, socket);
-
+        activeClientThreads.add(new SocketThread(this, name, socket));
     }
 
     @Override
@@ -81,13 +83,12 @@ public class ChatServer implements ServerSocketThreadListener, SocketThreadListe
     @Override
     public synchronized void onSocketStart(SocketThread thread, Socket socket) {
         putLog("Socket created");
-
     }
 
     @Override
     public synchronized void onSocketStop(SocketThread thread) {
         putLog("Socket stopped");
-
+        activeClientThreads.remove(thread);
     }
 
     @Override
@@ -98,7 +99,9 @@ public class ChatServer implements ServerSocketThreadListener, SocketThreadListe
 
     @Override
     public synchronized void onReceiveString(SocketThread thread, Socket socket, String msg) {
-        thread.sendMessage("echo: " + msg);
+        for (SocketThread t : activeClientThreads) {
+            t.sendMessage(msg);
+        }
     }
 
     @Override
@@ -107,4 +110,3 @@ public class ChatServer implements ServerSocketThreadListener, SocketThreadListe
     }
 
 }
-
