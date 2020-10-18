@@ -54,6 +54,11 @@ public class ChatServer implements ServerSocketThreadListener, SocketThreadListe
     public void onServerStop(ServerSocketThread thread) {
         putLog("Server thread stopped");
         SqlClient.disconnect();
+//?? здесь нужно закрыть все сокеты?
+        for (SocketThread t : clients) {
+            t.close();
+        }
+        clients.clear();
     }
 
     @Override
@@ -95,7 +100,12 @@ public class ChatServer implements ServerSocketThreadListener, SocketThreadListe
     @Override
     public synchronized void onSocketStop(SocketThread thread) {
         putLog("Socket stopped");
-
+//?? здесь нужно обработать дисконнект клиента?
+        clients.remove(thread);
+        String nick = ((ClientThread) thread).getNickname();
+        if (nick != null) {
+            sendToAllAuthorizedClients(Library.getTypeBroadcast("Server", nick + " disconnected"));
+        }
     }
 
     @Override

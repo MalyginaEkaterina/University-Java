@@ -7,6 +7,8 @@ import java.awt.event.ActionListener;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.Socket;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 public class ClientGUI extends JFrame implements ActionListener, Thread.UncaughtExceptionHandler, SocketThreadListener {
     private static final int WIDTH = 600;
@@ -180,7 +182,19 @@ public class ClientGUI extends JFrame implements ActionListener, Thread.Uncaught
 
     @Override
     public void onReceiveString(SocketThread thread, Socket socket, String msg) {
-        putLog(msg);
+        String formatMsg;
+        String[] arr = msg.split(Library.DELIMITER);
+        if (arr[0].equals(Library.TYPE_BROADCAST)) {
+            DateFormat DATE_FORMAT = new SimpleDateFormat("HH:mm:ss");
+            formatMsg = DATE_FORMAT.format(Long.parseLong(arr[1]))+ " " + arr[2] + ": " + arr[3];
+            putLog(formatMsg);
+        } else if (arr[0].equals(Library.AUTH_DENIED)) {
+            putLog("Invalid login/password");
+        } else if (arr[0].equals(Library.AUTH_ACCEPT)) {
+            putLog("Connected");
+        }else {
+            putLog(msg);
+        }
     }
 
     @Override

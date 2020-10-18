@@ -2,6 +2,7 @@ package ru.geekbrains;
 
 import java.io.*;
 import java.net.Socket;
+import java.net.SocketException;
 
 public class SocketThread extends Thread {
 
@@ -25,11 +26,16 @@ public class SocketThread extends Thread {
             out = new DataOutputStream(socket.getOutputStream());
             listener.onSocketReady(this, socket);
             while (!isInterrupted()) {
-                String msg = in.readUTF();
+//переписала так, т.к. всплывали ошибки
+               String msg;
+                try {
+                    msg = in.readUTF();
+                } catch (SocketException | EOFException e) {
+                    System.out.println(e);
+                    break;
+                }
                 listener.onReceiveString(this, socket, msg);
             }
-        } catch (EOFException e) {
-            // i don't like this workaround
         } catch (IOException e) {
             listener.onSocketException(this, e);
         } finally {
@@ -45,6 +51,7 @@ public class SocketThread extends Thread {
     public synchronized boolean sendMessage(String msg) {
         try {
             out.writeUTF(msg);
+//?? зачем вызывается метод flush, он вроде пустой для стрима из сокета?
             out.flush();
             return true;
         } catch (IOException e) {
