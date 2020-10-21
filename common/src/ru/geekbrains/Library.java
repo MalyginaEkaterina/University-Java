@@ -7,6 +7,11 @@ public class Library {
      * /auth_denied
      * /broadcast±time±src±msg
      * /msg_format_error
+     * /user_list±user1±user2±user3±....
+     * /client_bcast±msg
+     * /client_private±recipient±msg
+     * /client_snooze
+     * /
      * */
 
     public static final String DELIMITER = "±";
@@ -15,6 +20,8 @@ public class Library {
     public static final String AUTH_DENIED = "/auth_denied";
     public static final String MSG_FORMAT_ERROR = "/msg_format_error"; // если мы вдруг не поняли, что за сообщение и не смогли разобрать
     public static final String TYPE_BROADCAST = "/bcast"; // то есть сообщение, которое будет посылаться всем
+    public static final String USER_LIST = "/user_list";
+    public static final String TYPE_BCAST_CLIENT = "/client_bcast";
 
     public static String getAuthRequest(String login, String password) {
         return AUTH_REQUEST + DELIMITER + login + DELIMITER + password;
@@ -37,5 +44,11 @@ public class Library {
                 DELIMITER + src + DELIMITER + message;
     }
 
+    public static String getUserList(String users) {
+        return USER_LIST + DELIMITER + users;
+    }
 
+    public static String getTypeClientBcast(String msg) {
+        return TYPE_BCAST_CLIENT + DELIMITER + msg;
+    }
 }
