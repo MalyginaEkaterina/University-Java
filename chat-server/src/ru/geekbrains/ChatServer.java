@@ -70,13 +70,26 @@ public class ChatServer implements ServerSocketThreadListener, SocketThreadListe
         String msgType = arr[0];
         switch (msgType) {
             case Library.TYPE_BCAST_CLIENT:
-                sendToAllAuthorizedClients(Library.getTypeBroadcast(
-                        client.getNickname()+" всем", arr[1]));
+                sendToAllAuthorizedClients(Library.getTypeBroadcast(client.getNickname(), arr[1]));
+                break;
+            case Library.TYPE_PRIVATE_CLIENT:
+                sendPrivateMsg(arr[1], Library.getTypePrivate(client.getNickname(), arr[2]), client);
                 break;
             default:
                 client.msgFormatError(msg);
 
         }
+    }
+
+    private void sendPrivateMsg(String recipient, String msg, ClientThread from) {
+        for (int i = 0; i < clients.size(); i++) {
+            ClientThread client = (ClientThread) clients.get(i);
+            if (recipient.equals(client.getNickname()) && client.isAuthorized()) {
+                client.sendMessage(msg);
+                return;
+            }
+        }
+        from.sendMessage(Library.getTypePrivate("server", recipient + " is not connected"));
     }
 
     private void sendToAllAuthorizedClients(String msg) {
@@ -144,8 +157,7 @@ public class ChatServer implements ServerSocketThreadListener, SocketThreadListe
         putLog("Client connected");
         String name = "SocketThread " + socket.getInetAddress() + ":" + socket.getPort();
         new ClientThread(this, name, socket);
-
-    }
+   }
 
     @Override
     public void onServerException(ServerSocketThread thread, Throwable exception) {

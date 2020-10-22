@@ -4,6 +4,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.Socket;
@@ -18,7 +20,7 @@ public class ClientGUI extends JFrame implements ActionListener, Thread.Uncaught
     private final JTextArea log = new JTextArea();
     private final JPanel panelTop = new JPanel(new GridLayout(2, 3));
 
-    private final JTextField tfIPAddress = new JTextField("95.84.209.91");
+    private final JTextField tfIPAddress = new JTextField("127.0.0.1");
     private final JTextField tfPort = new JTextField("8189");
     private final JCheckBox cbAlwaysOnTop = new JCheckBox("Always on top");
     private final JTextField tfLogin = new JTextField("ivan");
@@ -61,6 +63,17 @@ public class ClientGUI extends JFrame implements ActionListener, Thread.Uncaught
         tfMessage.addActionListener(this);
         btnLogin.addActionListener(this);
         btnDisconnect.addActionListener(this);
+
+        userList.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    tfMessage.setText("@" + userList.getSelectedValue());
+                    tfMessage.grabFocus();
+                }
+            }
+        });
+
         panelBottom.setVisible(false);
 
         panelTop.add(tfIPAddress);
@@ -106,10 +119,20 @@ public class ClientGUI extends JFrame implements ActionListener, Thread.Uncaught
     }
 
     private void sendMessage() {
-        String msg = tfMessage.getText();
-        if ("".equals(msg)) return;
+        String msg = tfMessage.getText().trim();
+        if ("".equals(msg)) {
+            return;
+        }
         tfMessage.setText(null);
         tfMessage.grabFocus();
+        if (msg.charAt(0) == '@') {
+            String recipientName = msg.split(" ")[0].substring(1);
+            String messageText = msg.substring(recipientName.length() + 1).trim();
+            putLog(DATE_FORMAT.format(System.currentTimeMillis()) + " private msg to " + recipientName
+                    + ": " + messageText);
+            socketThread.sendMessage(Library.getTypeClientPrivate(recipientName, messageText));
+            return;
+        }
         socketThread.sendMessage(Library.getTypeClientBcast(msg));
     }
 
@@ -167,6 +190,10 @@ public class ClientGUI extends JFrame implements ActionListener, Thread.Uncaught
                 putLog(DATE_FORMAT.format(Long.parseLong(arr[1])) +
                         arr[2] + ": " + arr[3]);
                 break;
+            case Library.TYPE_PRIVATE:
+                putLog(DATE_FORMAT.format(Long.parseLong(arr[1])) + " private msg from " +
+                        arr[2] + ": " + arr[3]);
+                break;
             case Library.USER_LIST:
                 msg = msg.substring(Library.USER_LIST.length() + Library.DELIMITER.length());
                 String[] usersArray = msg.split(Library.DELIMITER);
@@ -188,7 +215,7 @@ public class ClientGUI extends JFrame implements ActionListener, Thread.Uncaught
 
     /**
      * Socket thread listener methods
-     * */
+     */
 
     @Override
     public void onSocketStart(SocketThread thread, Socket socket) {
@@ -222,3 +249,4 @@ public class ClientGUI extends JFrame implements ActionListener, Thread.Uncaught
         showException(thread, exception);
     }
 }
+

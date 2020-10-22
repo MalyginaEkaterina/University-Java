@@ -22,6 +22,8 @@ public class Library {
     public static final String TYPE_BROADCAST = "/bcast"; // то есть сообщение, которое будет посылаться всем
     public static final String USER_LIST = "/user_list";
     public static final String TYPE_BCAST_CLIENT = "/client_bcast";
+    public static final String TYPE_PRIVATE_CLIENT = "/client_private";
+    public static final String TYPE_PRIVATE = "/private";
 
     public static String getAuthRequest(String login, String password) {
         return AUTH_REQUEST + DELIMITER + login + DELIMITER + password;
@@ -50,5 +52,14 @@ public class Library {
 
     public static String getTypeClientBcast(String msg) {
         return TYPE_BCAST_CLIENT + DELIMITER + msg;
+    }
+
+    public static String getTypeClientPrivate(String recipient, String msg) {
+        return TYPE_PRIVATE_CLIENT + DELIMITER + recipient + DELIMITER + msg;
+    }
+
+    public static String getTypePrivate(String src, String message) {
+        return TYPE_PRIVATE + DELIMITER + System.currentTimeMillis() +
+                DELIMITER + src + DELIMITER + message;
     }
 }

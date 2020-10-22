@@ -1,6 +1,9 @@
 package ru.geekbrains;
 
-import java.io.*;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.EOFException;
+import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketException;
 
@@ -27,7 +30,7 @@ public class SocketThread extends Thread {
             listener.onSocketReady(this, socket);
             while (!isInterrupted()) {
 //переписала так, т.к. всплывали ошибки
-               String msg;
+                String msg;
                 try {
                     msg = in.readUTF();
                 } catch (SocketException | EOFException e) {

@@ -10,13 +10,14 @@ public class ClientThread extends SocketThread {
 
     public ClientThread(SocketThreadListener listener, String name, Socket socket) {
         super(listener, name, socket);
+        new WaitThread(this, 120000l);
     }
 
     public String getNickname() {
         return nickname;
     }
 
-    public boolean isAuthorized() {
+    public synchronized boolean isAuthorized() {
         return isAuthorized;
     }
 
@@ -29,7 +30,7 @@ public class ClientThread extends SocketThread {
         close();
     }
 
-    void authAccept(String nickname) {
+   synchronized void authAccept(String nickname) {
         isAuthorized = true;
         this.nickname = nickname;
         sendMessage(Library.getAuthAccept(nickname));
@@ -44,6 +45,4 @@ public class ClientThread extends SocketThread {
         sendMessage(Library.getMsgFormatError(msg));
         close();
     }
-
-
 }
